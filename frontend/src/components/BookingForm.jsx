@@ -1,75 +1,101 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import api from "../api";
 
-export default function BookingForm({ onSubmit, editingData }) {
-  const [form, setForm] = useState({
-    hallName: "",
-    date: "",
-    startTime: "",
-    endTime: "",
-    organizer: "",
-    contact: ""
-  });
+function BookingForm({ fetchBookings }) {
+  const [hallName, setHallName] = useState("");
+  const [date, setDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [organizer, setOrganizer] = useState("");
+  const [contact, setContact] = useState("");
 
-  useEffect(() => {
-    if (editingData) setForm(editingData);
-  }, [editingData]);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(form);
-    setForm({
-      hallName: "",
-      date: "",
-      startTime: "",
-      endTime: "",
-      organizer: "",
-      contact: ""
-    });
+
+    // ✅ Backend-compatible payload
+    const payload = {
+      hallName,
+      date, // YYYY-MM-DD
+      startTime: startTime.slice(0, 5), // HH:mm
+      endTime: endTime.slice(0, 5),     // HH:mm
+      organizer,
+      contact,
+    };
+
+    console.log("Submitting booking:", payload);
+
+    try {
+      await api.post("/bookings", payload);
+      alert("Booking successful!");
+
+      // reset form
+      setHallName("");
+      setDate("");
+      setStartTime("");
+      setEndTime("");
+      setOrganizer("");
+      setContact("");
+
+      fetchBookings();
+    } catch (error) {
+      console.error("Booking error:", error);
+      alert("Booking failed. Check inputs.");
+    }
   };
 
   return (
-    <form className="p-3 bg-dark text-light rounded" onSubmit={handleSubmit}>
-      <h3>{editingData ? "Edit Booking" : "New Booking"}</h3>
+    <div className="booking-form">
+      <h2>New Booking</h2>
 
-      <div className="row mt-3">
-        <div className="col-md-3">
-          <input className="form-control" placeholder="Hall Name"
-            name="hallName" value={form.hallName} onChange={handleChange} required />
-        </div>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Hall Name"
+          value={hallName}
+          onChange={(e) => setHallName(e.target.value)}
+          required
+        />
 
-        <div className="col-md-3">
-          <input type="date" className="form-control"
-            name="date" value={form.date} onChange={handleChange} required />
-        </div>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          required
+        />
 
-        <div className="col-md-2">
-          <input type="time" className="form-control"
-            name="startTime" value={form.startTime} onChange={handleChange} required />
-        </div>
+        <input
+          type="time"
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
+          required
+        />
 
-        <div className="col-md-2">
-          <input type="time" className="form-control"
-            name="endTime" value={form.endTime} onChange={handleChange} required />
-        </div>
+        <input
+          type="time"
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
+          required
+        />
 
-        <div className="col-md-2">
-          <input className="form-control" placeholder="Organizer"
-            name="organizer" value={form.organizer} onChange={handleChange} required />
-        </div>
+        <input
+          type="text"
+          placeholder="Organizer"
+          value={organizer}
+          onChange={(e) => setOrganizer(e.target.value)}
+          required
+        />
 
-        <div className="col-md-2 mt-2">
-          <input className="form-control" placeholder="Contact"
-            name="contact" value={form.contact} onChange={handleChange} />
-        </div>
-      </div>
+        <input
+          type="text"
+          placeholder="Contact"
+          value={contact}
+          onChange={(e) => setContact(e.target.value)}
+        />
 
-      <button className="btn btn-primary mt-3" type="submit">
-        {editingData ? "Update" : "Submit"}
-      </button>
-    </form>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
   );
 }
+
+export default BookingForm;

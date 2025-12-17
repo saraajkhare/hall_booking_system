@@ -1,55 +1,100 @@
-Hall Booking System — Ascentech Assignment
+# Hall Booking System – Setup Guide
 
-A full-stack Hall Booking system built using:
+## Prerequisites
 
-React (Vite) — Frontend
+Make sure you have the following installed:
 
-Node.js + Express — Backend API
+* Node.js (v18+ recommended)
+* npm
+* MySQL (running locally)
 
-Sequelize ORM — Database ORM
+---
 
-PostgreSQL — Database
+## Backend Setup
 
-Bootstrap — UI styling
+1. Open terminal and go to the backend folder:
 
-This project supports:
-
-✔ Add Booking
-✔ List Bookings
-✔ Edit Booking
-✔ Delete Booking
-✔ PostgreSQL as backend database
-✔ Environment variables stored outside the project (as required)
-
-
-Database Setup (PostgreSQL)
-
-Install PostgreSQL
-
-Open pgAdmin
-
-Create a database:
-
-hall_booking
-
-
-Create an external .env file outside the backend folder 
-
-How to Run the Project
-Step 1 — Start PostgreSQL server
-
-Make sure database is running.
-
-Step 2 — Run backend
+```bash
 cd backend
-npm run dev
+```
 
-Step 3 — Run frontend
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Configure database:
+
+* Create a MySQL database (e.g. `hall_booking`)
+* Update database credentials in `.env`
+
+Example:
+
+```env
+DB_NAME=hall_booking
+DB_USER=root
+DB_PASSWORD=your_password
+DB_HOST=localhost
+PORT=5001
+```
+
+4. Start the backend server:
+
+```bash
+npm run dev
+```
+
+Backend will run on:
+
+```
+http://localhost:5001
+```
+
+---
+
+## Frontend Setup
+
+1. Open a new terminal and go to the frontend folder:
+
+```bash
 cd frontend
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Start the frontend:
+
+```bash
 npm run dev
+```
 
-Open browser:
+Frontend will run on:
 
-Frontend: http://localhost:5173
-Backend: http://localhost:5000/api/bookings
+```
+http://localhost:5173
+```
 
+---
+
+## Access the Application
+
+Open your browser and visit:
+
+```
+http://localhost:5173
+```
+
+You can now create and view hall bookings.
+
+---
+
+If you want, I can also:
+
+* Make this README **even more minimal**
+* Add a **“Demo Video (Loom)”** section
+* Or write a **1-minute Loom speaking script** for submission

@@ -1,8 +1,17 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/bookings";
+const api = axios.create({
+  baseURL: "http://localhost:5001/api",
+});
 
-export const getBookings = () => axios.get(API_URL);
-export const addBooking = (data) => axios.post(API_URL, data);
-export const updateBooking = (id, data) => axios.put(`${API_URL}/${id}`, data);
-export const deleteBooking = (id) => axios.delete(`${API_URL}/${id}`);
+export const getBookings = async () => {
+  const res = await api.get("/bookings");
+  return res.data;
+};
+
+export const addBooking = async (data) => {
+  const res = await api.post("/bookings", data);
+  return res.data;
+};
+
+export default api;

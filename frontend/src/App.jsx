@@ -1,43 +1,91 @@
 import { useEffect, useState } from "react";
-import BookingForm from "./components/BookingForm";
-import BookingList from "./components/BookingList";
-import { getBookings, addBooking, updateBooking, deleteBooking } from "./api";
+import { getBookings, addBooking } from "./api";
+import "./App.css";
+
 
 function App() {
   const [bookings, setBookings] = useState([]);
-  const [editData, setEditData] = useState(null);
-
-  const loadBookings = () => {
-    getBookings().then(res => setBookings(res.data));
-  };
+  const [form, setForm] = useState({
+    hallName: "",
+    date: "",
+    startTime: "",
+    endTime: "",
+    organizer: "",
+    contact: "",
+  });
 
   useEffect(() => {
     loadBookings();
   }, []);
 
-  const handleSubmit = (data) => {
-    if (editData) {
-      updateBooking(editData.id, data).then(() => {
-        setEditData(null);
-        loadBookings();
-      });
-    } else {
-      addBooking(data).then(() => loadBookings());
-    }
+  const loadBookings = async () => {
+    const data = await getBookings();
+    setBookings(data);
   };
 
-  const handleDelete = (id) => {
-    deleteBooking(id).then(() => loadBookings());
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const payload = {
+    ...form,
+    startTime: form.startTime.slice(0, 5),
+    endTime: form.endTime.slice(0, 5),
+  };
+
+  try {
+    await addBooking(payload);
+    alert("Booking successful");
+    setForm({
+      hallName: "",
+      date: "",
+      startTime: "",
+      endTime: "",
+      organizer: "",
+      contact: "",
+    });
+    loadBookings();
+  } catch (err) {
+    console.error(err);
+    alert("Booking failed");
+  }
+};
+
+
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="container">
+
       <h1>Hall Booking System</h1>
 
-      <BookingForm onSubmit={handleSubmit} editingData={editData} />
-      <hr />
+      <form onSubmit={handleSubmit}>
+        <input name="hallName" placeholder="Hall" value={form.hallName} onChange={handleChange} />
+        <input name="date" type="date" value={form.date} onChange={handleChange} />
+        <input name="startTime" type="time" value={form.startTime} onChange={handleChange} />
+        <input name="endTime" type="time" value={form.endTime} onChange={handleChange} />
+        <input name="organizer" placeholder="Organizer" value={form.organizer} onChange={handleChange} />
+        <input name="contact" placeholder="Contact" value={form.contact} onChange={handleChange} />
+        <button type="submit">Book</button>
+      </form>
 
-      <BookingList bookings={bookings} onDelete={handleDelete} onEdit={setEditData} />
+      <div className="bookings">
+  <h2>Bookings</h2>
+  <ul>
+    {bookings.map((b) => (
+      <li key={b.id}>
+        <div>
+          <strong>{b.hallName}</strong>
+          <span>{b.date}</span>
+        </div>
+        <span>{b.startTime} – {b.endTime}</span>
+      </li>
+    ))}
+  </ul>
+</div>
+
     </div>
   );
 }
